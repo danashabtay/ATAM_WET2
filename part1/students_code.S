@@ -20,6 +20,15 @@ sbox:	.byte	99,124,119,123,-14,107,111,-59,48,1,103,43,-2,-41,-85,118
 
 .section	.text
 keyMixing:
+	movq (%rdi), %rax
+	movq (%rsi), %rdx
+	xor %rax, %rdx
+	movq %rdx, (%rdi)
+	movq 64(%rdi), %rax
+	movq 64(%rsi), %rdx
+	xor %rax, %rdx
+	leaq 64(%rdi), %rcx
+	movq %rdx, (%rcx)
 	ret
 
 
