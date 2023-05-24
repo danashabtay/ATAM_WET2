@@ -59,6 +59,7 @@ LOOP_HW2:
 	incq %rax	
 	jmp LOOP_HW2
 
+END_HW2:
 	ret
 
 
