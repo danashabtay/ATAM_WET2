@@ -31,8 +31,34 @@ keyMixing:
 	movq %rdx, (%rcx)
 	ret
 
-
 byteSubstitution:
+#save sbox base address to %r11
+leaq sbox(%rip), %r11
+# %rdi is memory address of input
+movq $0, %rax
+LOOP_HW2:
+	cmp $16,%rax
+	je END_HW2
+	
+	xorq %rcx, %rcx
+	
+	#get next byte from input
+	movb (%rdi,%rax,1), %rcx
+	
+	movb %r11, %rsi 
+	
+	#calc byte address in sbox
+	addq %rcx, %rsi
+	
+	#move value from sbox to %r9
+	movb (%rsi),%r9
+	
+	#ovverride value in input byte with the value from sbox
+	movb %r9,(%rdi,%rax,1)
+	
+	incq %rax	
+	jmp LOOP_HW2
+
 	ret
 
 
