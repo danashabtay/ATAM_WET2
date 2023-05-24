@@ -20,14 +20,23 @@ sbox:	.byte	99,124,119,123,-14,107,111,-59,48,1,103,43,-2,-41,-85,118
 
 .section	.text
 keyMixing:
+# move first 64 bit from input (%rdi) to %rax
 	movq (%rdi), %rax
+# move first 64 bit from key (%rsi) to %rdx	
 	movq (%rsi), %rdx
+# xor between first 64 bit - save result in %rdx
 	xor %rax, %rdx
+#override value in first 64 bit from input
 	movq %rdx, (%rdi)
-	movq 64(%rdi), %rax
-	movq 64(%rsi), %rdx
+# move last 64 bit from input (%rdi) to %rax
+	movq 8(%rdi), %rax
+# move last 64 bit from key (%rsi) to %rdx	
+	movq 8(%rsi), %rdx
+# xor between last 64 bit - save result in %rdx
 	xor %rax, %rdx
-	leaq 64(%rdi), %rcx
+#save address of start of input+8 byte offset in %rcx
+	leaq 8(%rdi), %rcx
+#override value in last 64 bit from input
 	movq %rdx, (%rcx)
 	ret
 
