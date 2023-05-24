@@ -43,18 +43,18 @@ LOOP_HW2:
 	xorq %rcx, %rcx
 	
 	#get next byte from input
-	movb (%rdi,%rax,1), %rcx
+	movb (%rdi,%rax,1), %cl
 	
-	movb %r11, %rsi 
+	movq %r11, %rsi 
 	
 	#calc byte address in sbox
 	addq %rcx, %rsi
 	
 	#move value from sbox to %r9
-	movb (%rsi),%r9
+	movb (%rsi),%r9b
 	
 	#ovverride value in input byte with the value from sbox
-	movb %r9,(%rdi,%rax,1)
+	movb %r9b,(%rdi,%rax,1)
 	
 	incq %rax	
 	jmp LOOP_HW2
