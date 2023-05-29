@@ -73,6 +73,20 @@ END_HW2:
 
 
 shiftRows:
+#index %r9=0
+movq $1, %r9
+movq $8, %r8
+#save the second row from input in %rdi
+LOOP:
+	cmp $4, %r9
+	je END:
+	movl (%rdi,%r9,4), %esi
+	rol %r8, %esi
+	addq $8, %r8
+	movl %esi,(%rdi,%r9,4)
+	incq %r9
+	
+END:
 	ret
 
 
