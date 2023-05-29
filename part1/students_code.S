@@ -75,15 +75,15 @@ END_HW2:
 shiftRows:
 
 movl 4(%rdi), %esi
-rol $8, %esi
+ror $8, %esi
 movl %esi, 4(%rdi)
 
 movl 8(%rdi), %esi
-rol $16, %esi
+ror $16, %esi
 movl %esi, 8(%rdi)
 
 movl 12(%rdi), %esi
-rol $24, %esi
+ror $24, %esi
 movl %esi, 12(%rdi)
 
 	ret
