@@ -141,7 +141,21 @@ LOOP_SR:
 LOOP_MC:
 	cmp %r8, %rdx
 	je WHICH_MC
+	push %rdi
+	push %rsi
+	push %rdx
+	push %rcx
+	push %r8
+	push %r10
+	push %r11
 	call mixColumns
+	pop %r11
+	pop %r10
+	pop %r8
+	pop %rcx
+	pop %rdx
+	pop %rsi
+	pop %rdi
 	movq 16(%rdi), %rdi
 	incq %r8
 	jmp LOOP_MC
