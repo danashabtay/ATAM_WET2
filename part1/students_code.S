@@ -76,18 +76,19 @@ shiftRows:
 #index %r9=0
 movq $1, %r9
 #rotation help register %r8=8
-movq $8, %r8
+movq $8, %cl
 
 LOOP:
 	cmp $4, %r9
 	je END
+	#save the second row from input in %esi
 	movl (%rdi,%r9,4), %esi
-	rol %r8, %esi
-	addq $8, %r8
+	rol CL, %esi
+	addb $8, %cl
 	movl %esi,(%rdi,%r9,4)
 	incq %r9
 	jmp LOOP
-	
+
 END:
 	ret
 
