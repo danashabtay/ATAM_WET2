@@ -148,8 +148,6 @@ LOOP_MC:
 		WHICH_MC:
 		cmp $2, %r11
 		je RETURN_MC
-		cmp $3, %r11
-		je RETURN_MC_2
  
 STEP_B:
 movq %rcx, %rdi
