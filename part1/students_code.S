@@ -86,8 +86,109 @@ movl 12(%rdi), %esi
 ror $24, %esi
 movl %esi, 12(%rdi)
 
-	ret
+ret
 
 
 cipher:
+#save input address in %rcx
+movq %rdi, %rcx
+
+#step a: perform KM for len blocks:
+movq $0, %r8
+movq $1, %r11
+
+LOOP_KM:
+	cmp %r8, %rdx
+	je WHICH_KM
+	call keyMixing
+	movq 16(%rdi), %rdi
+	incq %r8
+	jmp LOOP_KM
+	WHICH_KM:
+		cmp $1, %r11
+		je STEP_B
+		cmp $2, %r11
+		je RETURN_KM
+		cmp $3, %r11
+		je RETURN_KM_2
+
+LOOP_BS:
+	cmp %r8, %rdx
+	je WHICH_BS
+	call byteSubstitution
+	movq 16(%rdi), %rdi
+	incq %r8
+	jmp LOOP_BS
+	WHICH_BS:
+		cmp $2, %r11
+		je RETURN_BS
+		cmp $3, %r11
+		je RETURN_BS_2
+
+LOOP_SR:
+	cmp %r8, %rdx
+	je WHICH_SR
+	call shiftRows
+	movq 16(%rdi), %rdi
+	incq %r8
+	jmp LOOP_SR
+	WHICH_SR:
+		cmp $2, %r11
+		je RETURN_SR
+		cmp $3, %r11
+		je RETURN_SR_2
+
+LOOP_MC:
+	cmp %r8, %rdx
+	je WHICH_MC
+	call mixColumns
+	movq 16(%rdi), %rdi
+	incq %r8
+	jmp LOOP_MC
+		WHICH_MC:
+		cmp $2, %r11
+		je RETURN_MC
+		cmp $3, %r11
+		je RETURN_MC_2
+ 
+STEP_B:
+movq %rcx, %rdi
+movq $0, %r10
+movq $2, %r11
+LOOP_STEP_B:
+	cmp $9, %r10
+	je STEP_C
+	movq $0, %r8
+	jmp LOOP_BS
+	RETURN_BS:
+		movq %rcx, %rdi
+		movq $0, %r8
+		jmp LOOP_SR
+		RETURN_SR:
+			movq %rcx, %rdi
+			movq $0, %r8
+			jmp LOOP_MC
+			RETURN_MC:
+				movq %rcx, %rdi
+				movq $0, %r8
+				jmp LOOP_KM
+				RETURN_KM:
+					movq $0, %r8
+					movq %rcx, %rdi
+					incq %r10
+					jmp LOOP_STEP_B
+	
+STEP_C:
+movq $3, %r11
+jmp LOOP_BS
+RETURN_BS_2:
+	movq $0, %r8
+	movq %rcx, %rdi
+	jmp LOOP_SR
+		RETURN_SR_2:
+			movq $0, %r8
+			movq %rcx, %rdi
+			jmp LOOP_KM
+			RETURN_KM_2:
+
 	ret
