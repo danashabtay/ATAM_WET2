@@ -100,7 +100,21 @@ movq $1, %r11
 LOOP_KM:
 	cmp %r8, %rdx
 	je WHICH_KM
+	push %rdi
+	push %rsi
+	push %rdx
+	push %rcx
+	push %r8
+	push %r10
+	push %r11
 	call keyMixing
+	pop %r11
+	pop %r10
+	pop %r8
+	pop %rcx
+	pop %rdx
+	pop %rsi
+	pop %rdi
 	movq 16(%rdi), %rdi
 	incq %r8
 	jmp LOOP_KM
@@ -115,7 +129,21 @@ LOOP_KM:
 LOOP_BS:
 	cmp %r8, %rdx
 	je WHICH_BS
+	push %rdi
+	push %rsi
+	push %rdx
+	push %rcx
+	push %r8
+	push %r10
+	push %r11
 	call byteSubstitution
+	pop %r11
+	pop %r10
+	pop %r8
+	pop %rcx
+	pop %rdx
+	pop %rsi
+	pop %rdi
 	movq 16(%rdi), %rdi
 	incq %r8
 	jmp LOOP_BS
@@ -128,7 +156,21 @@ LOOP_BS:
 LOOP_SR:
 	cmp %r8, %rdx
 	je WHICH_SR
+	push %rdi
+	push %rsi
+	push %rdx
+	push %rcx
+	push %r8
+	push %r10
+	push %r11
 	call shiftRows
+	pop %r11
+	pop %r10
+	pop %r8
+	pop %rcx
+	pop %rdx
+	pop %rsi
+	pop %rdi
 	movq 16(%rdi), %rdi
 	incq %r8
 	jmp LOOP_SR
