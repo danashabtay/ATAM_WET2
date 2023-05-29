@@ -73,23 +73,19 @@ END_HW2:
 
 
 shiftRows:
-#index %r9=0
-movq $1, %r9
-#rotation help register %r8=8
-movb $8, %cl
 
-LOOP:
-	cmp $4, %r9
-	je END
-	#save the second row from input in %esi
-	movl (%rdi,%r9,4), %esi
-	rol %cl, %esi
-	addb $8, %cl
-	movl %esi,(%rdi,%r9,4)
-	incq %r9
-	jmp LOOP
+movl 4(%rdi), %esi
+rol $8, %esi
+movl %esi, 4(%rdi)
 
-END:
+movl 8(%rdi), %esi
+rol $16, %esi
+movl %esi, 8(%rdi)
+
+movl 12(%rdi), %esi
+rol $24, %esi
+movl %esi, 12(%rdi)
+
 	ret
 
 
