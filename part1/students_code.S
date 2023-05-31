@@ -104,12 +104,14 @@ MAIN_LOOP:
 		push %rdx
 		push %rcx
 		push %r8
+		push %r9
 		push %r10
 		push %r11
 		call keyMixing
 		pop %r11
 		pop %r10
 		pop %r8
+		pop %r9
 		pop %rcx
 		pop %rdx
 		pop %rsi
@@ -124,12 +126,14 @@ MAIN_LOOP:
 		push %rdx
 		push %rcx
 		push %r8
+		push %r9
 		push %r10
 		push %r11
 		call byteSubstitution
 		pop %r11
 		pop %r10
 		pop %r8
+		pop %r9
 		pop %rcx
 		pop %rdx
 		pop %rsi
@@ -140,12 +144,14 @@ MAIN_LOOP:
 		push %rdx
 		push %rcx
 		push %r8
+		push %r9
 		push %r10
 		push %r11
 		call shiftRows
 		pop %r11
 		pop %r10
 		pop %r8
+		pop %r9
 		pop %rcx
 		pop %rdx
 		pop %rsi
@@ -156,12 +162,14 @@ MAIN_LOOP:
 		push %rdx
 		push %rcx
 		push %r8
+		push %r9
 		push %r10
 		push %r11
 		call mixColumns
 		pop %r11
 		pop %r10
 		pop %r8
+		pop %r9
 		pop %rcx
 		pop %rdx
 		pop %rsi
@@ -172,12 +180,14 @@ MAIN_LOOP:
 		push %rdx
 		push %rcx
 		push %r8
+		push %r9
 		push %r10
 		push %r11
 		call keyMixing
 		pop %r11
 		pop %r10
 		pop %r8
+		pop %r9
 		pop %rcx
 		pop %rdx
 		pop %rsi
@@ -193,12 +203,14 @@ MAIN_LOOP:
 		push %rdx
 		push %rcx
 		push %r8
+		push %r9
 		push %r10
 		push %r11
 		call byteSubstitution
 		pop %r11
 		pop %r10
 		pop %r8
+		pop %r9
 		pop %rcx
 		pop %rdx
 		pop %rsi
@@ -208,12 +220,14 @@ MAIN_LOOP:
 		push %rdx
 		push %rcx
 		push %r8
+		push %r9
 		push %r10
 		push %r11
 		call shiftRows
 		pop %r11
 		pop %r10
 		pop %r8
+		pop %r9
 		pop %rcx
 		pop %rdx
 		pop %rsi
@@ -223,12 +237,14 @@ MAIN_LOOP:
 		push %rdx
 		push %rcx
 		push %r8
+		push %r9
 		push %r10
 		push %r11
 		call keyMixing
 		pop %r11
 		pop %r10
 		pop %r8
+		pop %r9
 		pop %rcx
 		pop %rdx
 		pop %rsi
