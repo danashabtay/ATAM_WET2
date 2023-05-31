@@ -20,7 +20,7 @@ pushq %rbp
 pushq %rsp
  
 #%rip value (command address) ro %rax
-movq 8(%rsp), %rax 	
+movq (%rsp), %rax 	
  
 movw (%rax), %ax
 
