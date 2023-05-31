@@ -26,7 +26,7 @@ xorq %rbx, %rbx
 xorq %rcx, %rcx
 xorq %rdi,%rdi
 xorq %rax, %rax
-movq (%rsp), %rbx 	
+movq 120(%rsp), %rbx 	
 movq (%rbx), %rbx
 
 #compare the first byte in %al of the opcode to 0X0F 
