@@ -90,158 +90,92 @@ ret
 
 
 cipher:
-#save input address in %rcx
-movq %rdi, %rcx
-
-#step a: perform KM for len blocks:
-movq $0, %r8
-movq $1, %r11
-
-LOOP_KM:
-	cmp %r8, %rdx
-	je WHICH_KM
-	push %rdi
-	push %rsi
-	push %rdx
-	push %rcx
-	push %r8
-	push %r10
-	push %r11
-	call keyMixing
-	pop %r11
-	pop %r10
-	pop %r8
-	pop %rcx
-	pop %rdx
-	pop %rsi
-	pop %rdi
-	movq 16(%rdi), %rdi
-	incq %r8
-	jmp LOOP_KM
-	WHICH_KM:
-		cmp $1, %r11
-		je STEP_B
-		cmp $2, %r11
-		je RETURN_KM
-		cmp $3, %r11
-		je RETURN_KM_2
-
-LOOP_BS:
-	cmp %r8, %rdx
-	je WHICH_BS
-	push %rdi
-	push %rsi
-	push %rdx
-	push %rcx
-	push %r8
-	push %r10
-	push %r11
-	call byteSubstitution
-	pop %r11
-	pop %r10
-	pop %r8
-	pop %rcx
-	pop %rdx
-	pop %rsi
-	pop %rdi
-	movq 16(%rdi), %rdi
-	incq %r8
-	jmp LOOP_BS
-	WHICH_BS:
-		cmp $2, %r11
-		je RETURN_BS
-		cmp $3, %r11
-		je RETURN_BS_2
-
-LOOP_SR:
-	cmp %r8, %rdx
-	je WHICH_SR
-	push %rdi
-	push %rsi
-	push %rdx
-	push %rcx
-	push %r8
-	push %r10
-	push %r11
-	call shiftRows
-	pop %r11
-	pop %r10
-	pop %r8
-	pop %rcx
-	pop %rdx
-	pop %rsi
-	pop %rdi
-	movq 16(%rdi), %rdi
-	incq %r8
-	jmp LOOP_SR
-	WHICH_SR:
-		cmp $2, %r11
-		je RETURN_SR
-		cmp $3, %r11
-		je RETURN_SR_2
-
-LOOP_MC:
-	cmp %r8, %rdx
-	je WHICH_MC
-	push %rdi
-	push %rsi
-	push %rdx
-	push %rcx
-	push %r8
-	push %r10
-	push %r11
-	call mixColumns
-	pop %r11
-	pop %r10
-	pop %r8
-	pop %rcx
-	pop %rdx
-	pop %rsi
-	pop %rdi
-	movq 16(%rdi), %rdi
-	incq %r8
-	jmp LOOP_MC
-		WHICH_MC:
-		cmp $2, %r11
-		je RETURN_MC
- 
-STEP_B:
-movq %rcx, %rdi
-movq $0, %r10
-movq $2, %r11
-LOOP_STEP_B:
-	cmp $9, %r10
-	je STEP_C
-	movq $0, %r8
-	jmp LOOP_BS
-	RETURN_BS:
-		movq %rcx, %rdi
-		movq $0, %r8
-		jmp LOOP_SR
-		RETURN_SR:
-			movq %rcx, %rdi
-			movq $0, %r8
-			jmp LOOP_MC
-			RETURN_MC:
-				movq %rcx, %rdi
-				movq $0, %r8
-				jmp LOOP_KM
-				RETURN_KM:
-					movq $0, %r8
-					movq %rcx, %rdi
-					incq %r10
-					jmp LOOP_STEP_B
+    # not using any of the callee saved registers \
+	# Therefore no callee saves here			  \
 	
-STEP_C:
-movq $3, %r11
-jmp LOOP_BS
-RETURN_BS_2:
-	movq $0, %r8
-	movq %rcx, %rdi
-	jmp LOOP_SR
-		RETURN_SR_2:
-			movq $0, %r8
-			movq %rcx, %rdi
-			jmp LOOP_KM
-			RETURN_KM_2:
-				ret
+traverse_array: 
+	pushq %rdx	
+	pushq %rdi
+	pushq %rsi
+	call keyMixing # a
+        popq %rsi
+        popq %rdi
+        popq %rdx
+
+	xor %rcx, %rcx
+	mov $10, %rcx
+b_loop:
+        pushq %rdx	
+        pushq %rdi
+        pushq %rsi
+        pushq %rcx
+        call byteSubstitution
+        popq %rcx
+        popq %rsi
+        popq %rdi
+        popq %rdx
+
+        pushq %rdx	
+        pushq %rdi
+        pushq %rsi
+        pushq %rcx
+        call shiftRows
+        popq %rcx
+        popq %rsi
+        popq %rdi
+        popq %rdx
+        
+        pushq %rdx	
+        pushq %rdi
+        pushq %rsi
+        pushq %rcx
+        call mixColumns
+        popq %rcx
+        popq %rsi
+        popq %rdi
+        popq %rdx
+        
+        pushq %rdx	
+        pushq %rdi
+        pushq %rsi
+        pushq %rcx
+        call keyMixing
+        popq %rcx
+        popq %rsi
+        popq %rdi
+        popq %rdx
+        
+        dec %rcx
+        cmpq $1, %rcx
+        jne b_loop
+# ====== END OF FIRST LOOP =======
+        pushq %rdx	
+        pushq %rdi
+        pushq %rsi
+        call byteSubstitution
+        popq %rsi
+        popq %rdi
+        popq %rdx
+        
+        pushq %rdx	
+        pushq %rdi
+        pushq %rsi
+        call shiftRows
+        popq %rsi
+        popq %rdi
+        popq %rdx
+
+        pushq %rdx	
+        pushq %rdi
+        pushq %rsi
+        call keyMixing
+        popq %rsi
+        popq %rdi
+        popq %rdx
+        
+        lea 16(%rdi), %rdi
+        dec %rdx
+        cmpq $0, %rdx
+        jne traverse_array
+	
+	ret
