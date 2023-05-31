@@ -20,12 +20,13 @@ pushq %rbp
 pushq %rsp
  
 #%rip value (command address) ro %rax
-movq (%rsp), %rax 	
- 
-movw (%rax), %ax
+
 
 xorq %rcx, %rcx
 xorq %rdi,%rdi
+xorq %rax, %rax
+movq (%rsp), %rax 	
+movw (%rax), %ax
 
 #compare the first byte in %al of the opcode to 0X0F 
 cmp $0x0F, %al
@@ -76,6 +77,7 @@ jmp END
 #if return value is not zero:
 NOT_ZERO:
 movq %rax, %rdi
+
 popq %rsp
 popq %rbp
 popq %rsi
