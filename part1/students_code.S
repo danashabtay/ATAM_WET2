@@ -90,92 +90,121 @@ ret
 
 
 cipher:
-    # not using any of the callee saved registers \
-	# Therefore no callee saves here			  \
+
+MAIN_LOOP:
+	movq $0, %r10
+	movq $0, %r8
+	#for each block in len blocks:
+	cmp %r10, %rdx 
+	je END_CIPHER
+	#perform step a for current block:
+	STEP_A:
+		push %rdi
+		push %rsi
+		push %rdx
+		push %r8
+		push %r10
+		call keyMixing
+		pop %r10
+		pop %r8
+		pop %rdx
+		pop %rsi
+		pop %rdi
+	#for eack block perform 9 iterations:
+	BLOCK_9_LOOP:
+	cmp $9, %r8
+	je STEPS_C_D_E
+	#do BS:
+		push %rdi
+		push %rsi
+		push %rdx
+		push %r8
+		push %r10
+		call byteSubstitution
+		pop %r10
+		pop %r8
+		pop %rdx
+		pop %rsi
+		pop %rdi
+	#do sr:
+		push %rdi
+		push %rsi
+		push %rdx
+		push %r8
+		push %r10
+		call shiftRows
+		pop %r10
+		pop %r8
+		pop %rdx
+		pop %rsi
+		pop %rdi
+	#do_mc:
+		push %rdi
+		push %rsi
+		push %rdx
+		push %r8
+		push %r10
+		call mixColumns
+		pop %r10
+		pop %r8
+		pop %rdx
+		pop %rsi
+		pop %rdi
+	#do km:
+		push %rdi
+		push %rsi
+		push %rdx
+		push %r8
+		push %r10
+		call keyMixing
+		pop %r10
+		pop %r8
+		pop %rdx
+		pop %rsi
+		pop %rdi
+	#finished a loop of 9 loops - incq %r8 and jump:
+	incq %r8
+	jmp BLOCK_9_LOOP
 	
-traverse_array: 
-	pushq %rdx	
-	pushq %rdi
-	pushq %rsi
-	call keyMixing # a
-        popq %rsi
-        popq %rdi
-        popq %rdx
-
-	xor %rcx, %rcx
-	mov $10, %rcx
-b_loop:
-        pushq %rdx	
-        pushq %rdi
-        pushq %rsi
-        pushq %rcx
-        call byteSubstitution
-        popq %rcx
-        popq %rsi
-        popq %rdi
-        popq %rdx
-
-        pushq %rdx	
-        pushq %rdi
-        pushq %rsi
-        pushq %rcx
-        call shiftRows
-        popq %rcx
-        popq %rsi
-        popq %rdi
-        popq %rdx
-        
-        pushq %rdx	
-        pushq %rdi
-        pushq %rsi
-        pushq %rcx
-        call mixColumns
-        popq %rcx
-        popq %rsi
-        popq %rdi
-        popq %rdx
-        
-        pushq %rdx	
-        pushq %rdi
-        pushq %rsi
-        pushq %rcx
-        call keyMixing
-        popq %rcx
-        popq %rsi
-        popq %rdi
-        popq %rdx
-        
-        dec %rcx
-        cmpq $1, %rcx
-        jne b_loop
-# ====== END OF FIRST LOOP =======
-        pushq %rdx	
-        pushq %rdi
-        pushq %rsi
-        call byteSubstitution
-        popq %rsi
-        popq %rdi
-        popq %rdx
-        
-        pushq %rdx	
-        pushq %rdi
-        pushq %rsi
-        call shiftRows
-        popq %rsi
-        popq %rdi
-        popq %rdx
-
-        pushq %rdx	
-        pushq %rdi
-        pushq %rsi
-        call keyMixing
-        popq %rsi
-        popq %rdi
-        popq %rdx
-        
-        lea 16(%rdi), %rdi
-        dec %rdx
-        cmpq $0, %rdx
-        jne traverse_array
+	#perform steps c d e for current block:
+	STEPS_C_D_E:
+		push %rdi
+		push %rsi
+		push %rdx
+		push %r8
+		push %r10
+		call byteSubstitution
+		pop %r10
+		pop %r8
+		pop %rdx
+		pop %rsi
+		pop %rdi
+		push %rdi
+		push %rsi
+		push %rdx
+		push %r8
+		push %r10
+		call shiftRows
+		pop %r10
+		pop %r8
+		pop %rdx
+		pop %rsi
+		pop %rdi
+		push %rdi
+		push %rsi
+		push %rdx
+		push %r8
+		push %r10
+		call keyMixing
+		pop %r10
+		pop %r8
+		pop %rdx
+		pop %rsi
+		pop %rdi
 	
-	ret
+	#finished all steps for a single block, move to the next block
+		lea 16(%rdi), %rdi
+		jmp STEP_A
+	
+	END_CIPHER:
+		ret
