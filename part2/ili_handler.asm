@@ -29,17 +29,16 @@ movq (%rsp), %rax
 movw (%rax), %ax
 
 #compare the first byte in %al of the opcode to 0X0F 
-cmp $0x0F, %al
+cmp $0x0F, %ah
 movq $1, %rcx
 jne ONE_BYTE
 
-cmp $0x3A, %ah
+cmp $0x3A, %al
 je ONE_BYTE
-cmp $0x38, %ah
+cmp $0x38, %al
 je ONE_BYTE
 
 #two byte opcode the last byte is stored in %ah
-shr $8, %ax
 movb %al, %dil
 movq $2, %rcx
 jmp CALL_WHATTODO
@@ -47,7 +46,7 @@ jmp CALL_WHATTODO
 ONE_BYTE:
 #the byte is stored in %al
 movq $1, %rcx
-movb %al, %dil
+movb %ah, %dil
   
 CALL_WHATTODO:
 call what_to_do
