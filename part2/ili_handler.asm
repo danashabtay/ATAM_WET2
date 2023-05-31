@@ -22,31 +22,34 @@ pushq %rsp
 #%rip value (command address) ro %rax
 
 
+xorq %rbx, %rbx
 xorq %rcx, %rcx
 xorq %rdi,%rdi
 xorq %rax, %rax
-movq (%rsp), %rax 	
-movw (%rax), %ax
+movq (%rsp), %rbx 	
+movq (%rbx), %rbx
 
 #compare the first byte in %al of the opcode to 0X0F 
-cmp $0x0F, %ah
 movq $1, %rcx
+cmpb $0x0F, %bl
 jne ONE_BYTE
 
-cmp $0x3A, %al
+cmp $0x3A, %bh
 je ONE_BYTE
-cmp $0x38, %al
+cmp $0x38, %bh
 je ONE_BYTE
 
 #two byte opcode the last byte is stored in %ah
-movb %al, %dil
+movb %bh, %rax
+movq %rax, %rdi
 movq $2, %rcx
 jmp CALL_WHATTODO
 
 ONE_BYTE:
 #the byte is stored in %al
 movq $1, %rcx
-movb %ah, %dil
+movb %bl, %al
+movq %rax, %rdi
   
 CALL_WHATTODO:
 call what_to_do
