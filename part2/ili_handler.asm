@@ -38,7 +38,8 @@ cmp $0x38, %ah
 je ONE_BYTE
 
 #two byte opcode the last byte is stored in %ah
-movb %ah, %dil
+shr $8, %ax
+movb %al, %dil
 movq $2, %rcx
 jmp CALL_WHATTODO
 
@@ -49,7 +50,7 @@ movb %al, %dil
   
 CALL_WHATTODO:
 call what_to_do
-cmp %rax, $0
+cmp $0, %rax
 jne NOT_ZERO
 
 #if return value is zero:
