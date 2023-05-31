@@ -183,7 +183,7 @@ MAIN_LOOP:
 	
 	#finished all steps for a single block, move to the next block
 		dec %rdx
-		lea 16(%rdi), %rdi
+		movq 16(%rdi), %rdi
 		jmp STEP_A
 	
 	END_CIPHER:
