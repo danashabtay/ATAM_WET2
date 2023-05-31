@@ -90,121 +90,158 @@ ret
 
 
 cipher:
+#save input address in %rcx
+movq %rdi, %rcx
 
-MAIN_LOOP:
-	movq $0, %r10
-	movq $0, %r8
-	#for each block in len blocks:
-	cmp %r10, %rdx 
-	je END_CIPHER
-	#perform step a for current block:
-	STEP_A:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
-		call keyMixing
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
-	#for eack block perform 9 iterations:
-	BLOCK_9_LOOP:
-	cmp $9, %r8
-	je STEPS_C_D_E
-	#do BS:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
-		call byteSubstitution
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
-	#do sr:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
-		call shiftRows
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
-	#do_mc:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
-		call mixColumns
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
-	#do km:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
-		call keyMixing
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
-	#finished a loop of 9 loops - incq %r8 and jump:
+#step a: perform KM for len blocks:
+movq $0, %r8
+movq $1, %r11
+
+LOOP_KM:
+	cmp %r8, %rdx
+	je WHICH_KM
+	push %rdi
+	push %rsi
+	push %rdx
+	push %rcx
+	push %r8
+	push %r10
+	push %r11
+	call keyMixing
+	pop %r11
+	pop %r10
+	pop %r8
+	pop %rcx
+	pop %rdx
+	pop %rsi
+	pop %rdi
+	movq 16(%rdi), %rdi
 	incq %r8
-	jmp BLOCK_9_LOOP
+	jmp LOOP_KM
+	WHICH_KM:
+		cmp $1, %r11
+		je STEP_B
+		cmp $2, %r11
+		je RETURN_KM
+		cmp $3, %r11
+		je RETURN_KM_2
+
+LOOP_BS:
+	cmp %r8, %rdx
+	je WHICH_BS
+	push %rdi
+	push %rsi
+	push %rdx
+	push %rcx
+	push %r8
+	push %r10
+	push %r11
+	call byteSubstitution
+	pop %r11
+	pop %r10
+	pop %r8
+	pop %rcx
+	pop %rdx
+	pop %rsi
+	pop %rdi
+	movq 16(%rdi), %rdi
+	incq %r8
+	jmp LOOP_BS
+	WHICH_BS:
+		cmp $2, %r11
+		je RETURN_BS
+		cmp $3, %r11
+		je RETURN_BS_2
+
+LOOP_SR:
+	cmp %r8, %rdx
+	je WHICH_SR
+	push %rdi
+	push %rsi
+	push %rdx
+	push %rcx
+	push %r8
+	push %r10
+	push %r11
+	call shiftRows
+	pop %r11
+	pop %r10
+	pop %r8
+	pop %rcx
+	pop %rdx
+	pop %rsi
+	pop %rdi
+	movq 16(%rdi), %rdi
+	incq %r8
+	jmp LOOP_SR
+	WHICH_SR:
+		cmp $2, %r11
+		je RETURN_SR
+		cmp $3, %r11
+		je RETURN_SR_2
+
+LOOP_MC:
+	cmp %r8, %rdx
+	je WHICH_MC
+	push %rdi
+	push %rsi
+	push %rdx
+	push %rcx
+	push %r8
+	push %r10
+	push %r11
+	call mixColumns
+	pop %r11
+	pop %r10
+	pop %r8
+	pop %rcx
+	pop %rdx
+	pop %rsi
+	pop %rdi
+	movq 16(%rdi), %rdi
+	incq %r8
+	jmp LOOP_MC
+		WHICH_MC:
+		cmp $2, %r11
+		je RETURN_MC
+ 
+STEP_B:
+movq %rcx, %rdi
+movq $0, %r10
+movq $2, %r11
+LOOP_STEP_B:
+	cmp $9, %r10
+	je STEP_C
+	movq $0, %r8
+	jmp LOOP_BS
+	RETURN_BS:
+		movq %rcx, %rdi
+		movq $0, %r8
+		jmp LOOP_SR
+		RETURN_SR:
+			movq %rcx, %rdi
+			movq $0, %r8
+			jmp LOOP_MC
+			RETURN_MC:
+				movq %rcx, %rdi
+				movq $0, %r8
+				jmp LOOP_KM
+				RETURN_KM:
+					movq $0, %r8
+					movq %rcx, %rdi
+					incq %r10
+					jmp LOOP_STEP_B
 	
-	#perform steps c d e for current block:
-	STEPS_C_D_E:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
-		call byteSubstitution
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
-		call shiftRows
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
-		call keyMixing
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
-	
-	#finished all steps for a single block, move to the next block
-		movq 16(%rdi), %rdi
-		jmp STEP_A
-	
-	END_CIPHER:
-		ret
+STEP_C:
+movq $3, %r11
+jmp LOOP_BS
+RETURN_BS_2:
+	movq $0, %r8
+	movq %rcx, %rdi
+	jmp LOOP_SR
+		RETURN_SR_2:
+			movq $0, %r8
+			movq %rcx, %rdi
+			jmp LOOP_KM
+			RETURN_KM_2:
+				ret
