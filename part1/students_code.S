@@ -92,117 +92,97 @@ ret
 cipher:
 
 MAIN_LOOP:
-	movq $0, %r10
 	movq $0, %r8
 	#for each block in len blocks:
-	cmp %r10, %rdx 
+	cmp $0, %rdx 
 	je END_CIPHER
 	#perform step a for current block:
 	STEP_A:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
+		pushq %rdi
+		pushq %rsi
+		pushq %rdx
+		pushq %r8
 		call keyMixing
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
+		popq %r8
+		popq %rdx
+		popq %rsi
+		popq %rdi
 	#for eack block perform 9 iterations:
 	BLOCK_9_LOOP:
 	cmp $9, %r8
 	je STEPS_C_D_E
 	#do BS:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
+		pushq %rdi
+		pushq %rsi
+		pushq %rdx
+		pushq %r8
 		call byteSubstitution
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
+		popq %r8
+		popq %rdx
+		popq %rsi
+		popq %rdi
 	#do sr:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
+		pushq %rdi
+		pushq %rsi
+		pushq %rdx
+		pushq %r8
 		call shiftRows
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
+		popq %r8
+		popq %rdx
+		popq %rsi
+		popq %rdi
 	#do_mc:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
+		pushq %rdi
+		pushq %rsi
+		pushq %rdx
+		pushq %r8
 		call mixColumns
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
+		popq %r8
+		popq %rdx
+		popq %rsi
+		popq %rdi
 	#do km:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
+		pushq %rdi
+		pushq %rsi
+		pushq %rdx
+		pushq %r8
 		call keyMixing
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
+		popq %r8
+		popq %rdx
+		popq %rsi
+		popq %rdi
 	#finished a loop of 9 loops - incq %r8 and jump:
 	incq %r8
 	jmp BLOCK_9_LOOP
 	
 	#perform steps c d e for current block:
 	STEPS_C_D_E:
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
+		pushq %rdi
+		pushq %rsi
+		pushq %rdx
 		call byteSubstitution
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
+		popq %rdx
+		popq %rsi
+		popq %rdi
+		
+		pushq %rdi
+		pushq %rsi
+		pushq %rdx
 		call shiftRows
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
-		push %rdi
-		push %rsi
-		push %rdx
-		push %r8
-		push %r10
+		popq %rdx
+		popq %rsi
+		popq %rdi
+		
+		pushq %rdi
+		pushq %rsi
+		pushq %rdx
 		call keyMixing
-		pop %r10
-		pop %r8
-		pop %rdx
-		pop %rsi
-		pop %rdi
+		popq %rdx
+		popq %rsi
+		popq %rdi
 	
 	#finished all steps for a single block, move to the next block
+		dec %rdx
 		lea 16(%rdi), %rdi
 		jmp STEP_A
 	
