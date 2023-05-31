@@ -164,7 +164,7 @@ MAIN_LOOP:
 		pop %rdi
 	#finished a loop of 9 loops - incq %r8 and jump:
 	incq %r8
-	je BLOCK_9_LOOP
+	jmp BLOCK_9_LOOP
 	
 	#perform steps c d e for current block:
 	STEPS_C_D_E:
