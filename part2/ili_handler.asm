@@ -46,7 +46,7 @@ movq $2, %rcx
 jmp CALL_WHATTODO
 
 ONE_BYTE:
-#the byte is stored in %al
+#the byte is stored in %bl
 movq $1, %rcx
 movb %bl, %al
 movq %rax, %rdi
@@ -76,7 +76,7 @@ popq %rcx
 popq %rbx
 popq %rax
 jmp * old_ili_handler
-jmp END
+jmp FINISH
 
 #if return value is not zero:
 NOT_ZERO:
@@ -84,12 +84,7 @@ movq %rax, %rdi
 
 cmp $2, %rcx
 jne ONE_BYTE_END
-addq $2, (%rsp) 
-jmp POP_ALL
-ONE_BYTE_END:
-addq $1, (%rsp)
 
-POP_ALL:
 popq %rsp
 popq %rbp
 popq %rsi
@@ -106,5 +101,27 @@ popq %rcx
 popq %rbx
 popq %rax
 
-END:
+addq $2, (%rsp) 
+jmp FINISH
+
+ONE_BYTE_END:
+popq %rsp
+popq %rbp
+popq %rsi
+popq %r15
+popq %r14
+popq %r13
+popq %r12
+popq %r11
+popq %r10
+popq %r9
+popq %r8
+popq %rdx
+popq %rcx
+popq %rbx
+popq %rax
+
+addq $1, (%rsp)
+
+FINISH:
 iretq
