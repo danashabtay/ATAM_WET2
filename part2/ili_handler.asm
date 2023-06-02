@@ -17,6 +17,7 @@ pushq %r14
 pushq %r15
 pushq %rsi
 pushq %rbp
+pushq %rsp
  
 #%rip value (command address) ro %rbx
 
@@ -57,6 +58,7 @@ jne NOT_ZERO
 
 #if return value is zero:
 old_handler:
+popq %rsp
 popq %rbp
 popq %rsi
 popq %r15
@@ -78,6 +80,7 @@ jmp FINISH
 NOT_ZERO:
 movq %rax, %rdi
 
+popq %rsp
 popq %rbp
 popq %rsi
 popq %r15
