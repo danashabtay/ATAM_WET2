@@ -79,6 +79,7 @@ jmp FINISH
 #if return value is not zero:
 NOT_ZERO:
 movq %rax, %rdi
+addq $1, (%rsp) 
 
 popq %rsp
 popq %rbp
@@ -95,8 +96,6 @@ popq %rdx
 popq %rcx
 popq %rbx
 popq %rax
-
-addq $1, (%rsp) 
 
 FINISH:
 iretq
