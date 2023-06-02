@@ -86,9 +86,11 @@ movq %rax, %rdi
 cmp $2, %rcx
 jne ONE_BYTE_END
 addq $2, (%rsp) 
+jmp POP_ALL
 ONE_BYTE_END:
 addq $1, (%rsp)
 
+POP_ALL:
 popq %rsp
 popq %rbp
 popq %rsi
