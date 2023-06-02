@@ -96,7 +96,11 @@ my_ili_handler:
 	popq %rbx
 	popq %rax
 
+	cmp $2, %rcx
+	jne ONE_BYTE_END
 	addq $2, (%rsp) 
+	ONE_BYTE_END:
+	addq $1, (%rsp)
 
 	END:
 	iretq
