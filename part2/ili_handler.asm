@@ -82,12 +82,29 @@ my_ili_handler:
 
 	cmp $2, %rcx
 	jne ONE_BYTE_END
-	addq $2, (%rsp) 
-	jmp POP_ALL
-	ONE_BYTE_END:
-	addq $1, (%rsp)
 	
-	POP_ALL:
+	popq %rsp
+	popq %rbp
+	popq %rsi
+	popq %r15
+	popq %r14
+	popq %r13
+	popq %r12
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rdx
+	popq %rcx
+	popq %rbx
+	popq %rax
+	
+	addq $2, (%rsp) 
+	
+	jmp END
+	
+	ONE_BYTE_END:
+	
 	popq %rsp
 	popq %rbp
 	popq %rsi
@@ -104,6 +121,7 @@ my_ili_handler:
 	popq %rbx
 	popq %rax
 
-
+	addq $1, (%rsp)
+	
 	END:
 	iretq
