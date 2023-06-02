@@ -52,9 +52,7 @@ movb %bl, %al
 movq %rax, %rdi
   
 CALL_WHATTODO:
-pushq %rcx
 call what_to_do
-popq %rcx
 cmp $0, %rax
 jne NOT_ZERO
 
@@ -82,9 +80,6 @@ jmp FINISH
 NOT_ZERO:
 movq %rax, %rdi
 
-cmp $2, %rcx
-jne ONE_BYTE_END
-
 popq %rsp
 popq %rbp
 popq %rsi
@@ -101,27 +96,7 @@ popq %rcx
 popq %rbx
 popq %rax
 
-addq $2, (%rsp) 
-jmp FINISH
-
-ONE_BYTE_END:
-popq %rsp
-popq %rbp
-popq %rsi
-popq %r15
-popq %r14
-popq %r13
-popq %r12
-popq %r11
-popq %r10
-popq %r9
-popq %r8
-popq %rdx
-popq %rcx
-popq %rbx
-popq %rax
-
-addq $1, (%rsp)
+addq $1, (%rsp) 
 
 FINISH:
 iretq
